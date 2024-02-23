@@ -2,61 +2,59 @@ import FeadbackOptions from './FeadbackForm/FeadbackOptions';
 import Statistic from './Statistic/Statistic';
 import React, { Component } from 'react';
 import Section from './Section/Section';
+import { useState } from 'react';
 
-class App extends Component {
-  state = {
+const App = () => {
+  const [state, setState] = useState({
     good: 0,
     neutral: 0,
     bad: 0,
+  });
+
+  const onLiveFeadback = ({ value }) => {
+    setState(prevState => ({ ...prevState, [value]: prevState[value] + 1 }));
   };
 
-  onLiveFeadback = ({ value }) => {
-    this.setState(prevState => ({ [value]: prevState[value] + 1 }));
+  const countTotalFeadback = () => {
+    return state.good + state.neutral + state.bad;
   };
 
-  countTotalFeadback = () => {
-    return this.state.good + this.state.neutral + this.state.bad;
+  const countPositiveFeadbackPercentage = () => {
+    return Math.round((100 * state.good) / countTotalFeadback());
   };
 
-  countPositiveFeadbackPercentage = () => {
-    return Math.round((100 * this.state.good) / this.countTotalFeadback());
-  };
-
-  render() {
-    const { good, neutral, bad } = this.state;
-    const totalFeadback = this.countTotalFeadback();
-    return (
-      <div
-        style={{
-          height: '100vh',
-          justifyContent: 'center',
-          alignItems: 'center',
-          fontSize: 40,
-          color: '#010101',
-        }}
-      >
-        <Section title="Please leave your featbeak">
-          <FeadbackOptions
-            options={Object.keys(this.state)}
-            onLiveFeadback={option => this.onLiveFeadback({ value: option })}
+  const totalFeadback = countTotalFeadback();
+  return (
+    <div
+      style={{
+        height: '100vh',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: 40,
+        color: '#010101',
+      }}
+    >
+      <Section title="Please leave your featbeak">
+        <FeadbackOptions
+          options={Object.keys(state)}
+          onLiveFeadback={option => onLiveFeadback({ value: option })}
+        />
+      </Section>
+      <Section title="Statistics">
+        {totalFeadback > 0 ? (
+          <Statistic
+            good={state.good}
+            neutral={state.neutral}
+            bad={state.bad}
+            total={countTotalFeadback}
+            positivePercentage={countPositiveFeadbackPercentage}
           />
-        </Section>
-        <Section title="Statistics">
-          {totalFeadback > 0 ? (
-            <Statistic
-              good={good}
-              neutral={neutral}
-              bad={bad}
-              total={this.countTotalFeadback}
-              positivePercentage={this.countPositiveFeadbackPercentage}
-            />
-          ) : (
-            <p>'There is no feedback'</p>
-          )}
-        </Section>
-      </div>
-    );
-  }
-}
+        ) : (
+          <p>'There is no feedback'</p>
+        )}
+      </Section>
+    </div>
+  );
+};
 
 export default App;
