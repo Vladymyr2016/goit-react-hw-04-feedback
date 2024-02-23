@@ -1,6 +1,5 @@
 import FeadbackOptions from './FeadbackForm/FeadbackOptions';
 import Statistic from './Statistic/Statistic';
-import React, { Component } from 'react';
 import Section from './Section/Section';
 import { useState } from 'react';
 
